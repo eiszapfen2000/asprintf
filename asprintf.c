@@ -4,19 +4,29 @@
 #include "asprintf.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+#if _MSC_VER < 1800
+#undef va_copy
+#define va_copy(dst, src) (dst = src)
+#endif
+
 #ifdef __cplusplus
 extern "C"
 #endif
 int vasprintf(char** strp, const char* fmt, va_list ap)
 {
+    va_list ap_copy;
     int formattedLength, actualLength;
     size_t requiredSize;
 
     // be paranoid
     *strp = NULL;
 
+    // copy va_list, as it is used twice 
+    va_copy(ap_copy, ap);
+
     // compute length of formatted string, without NULL terminator
-    formattedLength = _vscprintf(fmt, ap);
+    formattedLength = _vscprintf(fmt, ap_copy);
+    va_end(ap_copy);
 
     // bail out on error
     if (formattedLength < 0)
