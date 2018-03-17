@@ -1,2 +1,2 @@
 # asprintf
-An asprintf implementation for the Microsoft Windows platform
+An implementation of vasprintf and asprintf for the Microsoft Windows platform.
